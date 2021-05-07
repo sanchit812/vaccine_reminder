@@ -9,7 +9,7 @@
     <div class="container">
         <div class="row pt-5">
             <div class="col-12 col-xl-6 pt-4">
-                <form action="https://asia-south1-testbook-app.cloudfunctions.net/vaccine_availability_notif" method="GET" class="form-inline" name="form1">
+                <form class="form-inline" name="form1">
                     <div class="form-group">
                         <br/>
                         <label for="state" class="ml-3"><b>State:</b></label>
@@ -36,12 +36,13 @@
                         </select>
 
                         <label for="email" class="ml-3"><b>Email:</b></label>
-                        <input id="email" type="email" class="form-control ml-2" name="email" placeholder="Enter your email address" required>
+                        <input id="email" type="email" class="form-control ml-2" name="email" placeholder="Enter your email address" onchange="validateEmail" required>
 
                         <br/>
-                        <button type="submit" class="btn btn-primary ml-3" >Submit</button>
                     </div>
                 </form>
+                <button class="btn btn-primary ml-3" onclick="submit_form()">Submit</button>
+
             </div>
         </div>
     </div>
@@ -72,13 +73,20 @@
 
         }
         function submit_form(){
+            alert("hello")
+            // window.location = "https://sanchit812.github.io/vaccine_reminder/"
+            
+            // fetch('https://sanchit812.github.io/vaccine_reminder/', {metod:"GET"})
+            // location.replace('https://sanchit812.github.io/vaccine_reminder/');
+
             url = "https://asia-south1-testbook-app.cloudfunctions.net/vaccine_availability_notif"
-            fetch(url, {
+            resp = fetch(url, {
                 method:"POST",
                 headers: {
-                     "Content-type": "application/json",
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
                 },
-                body: JSON.stringify({
+            body: JSON.stringify({
                     "state": document.getElementById("stateDropdown").value,
                     "district": document.getElementById("cityDropdown").value,
                     "vaccine": document.getElementById("vaccine").value,
@@ -87,13 +95,17 @@
                     })
                 })
                 .then(result => {
-                    console.log("Completed with result:", result);
+                    console.log("Completed with result:", JSON.stringify(result));
+                    alert("dYou are registered! We will notify you as the vaccine in your distict becomes available!")
                 })
                 .catch(error => {
-                    alert(error)
+                    alert(JSON.stringify(error))
                     throw(error);
                 });
-            // alert('You are registered! We will notify you as the vaccine in your distict becomes available!')
+            console.log(JSON.stringify(resp))
+            alert(JSON.stringify(resp))
+
+            // fetch("https://sanchit812.github.io/vaccine_reminder/",{method:"GET"})
 
         }
 
