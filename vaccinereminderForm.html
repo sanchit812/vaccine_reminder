@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vaccine Notifier</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row pt-5">
+            <div class="col-12 col-xl-6 pt-4">
+                <form action="https://asia-south1-testbook-app.cloudfunctions.net/vaccine_availability_notif" method="GET" class="form-inline" name="form1">
+                    <div class="form-group">
+                        <br/>
+                        <label for="state" class="ml-3"><b>State:</b></label>
+                        <select class="form-select" name="state" aria-label="State" id="stateDropdown" required onchange="updateCity()">
+                            <option value="">Select your State</option>
+                        </select>
+
+                        <label for="district" class="ml-3"><b>District:</b></label>
+                        <select class="form-select" name="district" aria-label="City" id="cityDropdown" required>
+                            <option value="">Select your District</option>
+                        </select>
+
+                        <label for="vaccine" class="ml-3"><b>Select a Vaccine whose reminder you want:</b></label>
+                        <select class="form-select" name="vaccine" aria-label="Vaccine" required id="vaccine">
+                            <option value="BOTH">Both</option>
+                            <option value="COVISHIELD">Covishield</option>
+                            <option value="COVAXIN">Covaxin</option>
+                        </select>
+
+                        <label for="age" class="ml-3"><b>Minimum Age Limit for the slot:</b></label>
+                        <select class="form-select" name="age" aria-label="Vaccine" required id="age">
+                            <option value="45">45 (age 45 and above only)</option>
+                            <option value="18">18 (age 18 and above)</option>
+                        </select>
+
+                        <label for="email" class="ml-3"><b>Email:</b></label>
+                        <input id="email" type="email" class="form-control ml-2" name="email" placeholder="Enter your email address" required onchange="validateEmail()">
+
+                        <br/>
+                        <button type="submit" class="btn btn-primary ml-3" >Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src = "stateAndCity.js"/></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            Object.keys(stateAndCity).forEach(function(state) {
+                $('#stateDropdown').append('<option value="' + state + '">' + state + '</option>');
+            });
+        });
+
+        function updateCity () {
+            var stateSelected = document.getElementById("stateDropdown").value;
+            for(idx in stateAndCity[stateSelected]) {
+                $('#cityDropdown').append('<option value="' + stateAndCity[stateSelected][idx]['district_id'] + '">' + stateAndCity[stateSelected][idx]['district_name'] + '</option>');
+            }
+        }
+
+        function validateEmail (){
+            var email = document.getElementById("email").value
+            var domain = email.split('@')[1]
+            if(domain!='testbook.com'){
+                alert("user must be testbook employee")
+                document.getElementById("email").value = "";
+
+            }
+
+        }
+        function submit_form(){
+            url = "https://asia-south1-testbook-app.cloudfunctions.net/vaccine_availability_notif"
+            fetch(url, {
+                method:"POST",
+                headers: {
+                     "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    "state": document.getElementById("stateDropdown").value,
+                    "district": document.getElementById("cityDropdown").value,
+                    "vaccine": document.getElementById("vaccine").value,
+                    "age": document.getElementById("age").value,
+                    "email": document.getElementById("email").value
+                    })
+                })
+                .then(result => {
+                    console.log("Completed with result:", result);
+                })
+                .catch(error => {
+                    alert(error)
+                    throw(error);
+                });
+            // alert('You are registered! We will notify you as the vaccine in your distict becomes available!')
+
+        }
+
+    </script>
+</body>
+</html>
