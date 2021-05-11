@@ -262,10 +262,6 @@ function showSlides(n) {
             
             // fetch('https://sanchit812.github.io/vaccine_reminder/', {metod:"GET"})
             // location.replace('https://sanchit812.github.io/vaccine_reminder/');
-            if(document.getElementById("email").value == ""){
-              alert("Email is required to send the notification")
-              return
-            }
 
             url = "https://asia-south1-testbook-app.cloudfunctions.net/vaccine_availability_notif"
             resp = fetch(url, {
